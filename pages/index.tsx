@@ -271,7 +271,7 @@ export default function Home({
           <a href="https://twitter.com/zaidmukaddam" className="hover:underline">
             Made by <strong>@zaidmukaddam</strong>
           </a>
-          <a href="https://github.com/zaidmukaddma/witticism-ai" className="hover:underline">
+          <a href="https://github.com/zaidmukaddam/witticism-ai" className="hover:underline">
             Code on GitHub
           </a>
         </footer>
