@@ -102,7 +102,6 @@ export default function Home({
           content="Generate jokes with an AI model trained on 10,000 late night comedy monologue quips."
         />
         <meta name="twitter:image" content="https://witticism-ai.space/promo.png" />
-        <script async src="https://cdn.splitbee.io/sb.js" />
       </Head>
 
       <div className="mx-auto p-4 lg:p-6 max-w-screen-sm min-h-screen">
