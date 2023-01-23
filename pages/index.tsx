@@ -84,6 +84,7 @@ export default function Home({
           name="description"
           content="Generate jokes with an AI model trained on 10,000 late night comedy monologue quips."
         />
+        <meta property="image" content="https://witticism-ai.space/promo.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
 
