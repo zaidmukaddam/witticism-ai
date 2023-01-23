@@ -8,7 +8,7 @@ export const EXAMPLE_OPENING_LINES = [
   "Facebook announced major changes to its privacy settings.",
   "A hacker has published Kim Kardashian's financial information online.",
   "An exact replica of the Titanic is scheduled to set sail in 2018.",
-  "Legendary astronaut Buzz Aldrin got married for the 3rd time!.",
+  "Legendary astronaut Buzz Aldrin got married for the 3rd time!",
   "Safety experts now say more and more car crashes are being caused by GPS devices.",
   "Netflix is testing a new feature that will allow you to hide what you’ve been watching.",
   "A new survey shows two-thirds of American adults pee in the ocean.",
