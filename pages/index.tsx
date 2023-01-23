@@ -93,6 +93,14 @@ export default function Home({
           content="Generate jokes with an AI model trained on 10,000 late night comedy monologue quips."
         />
         <meta property="og:image" content="https://witticism-ai.space/promo.png" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="witticism.ai" />
+        <meta
+          name="twitter:description"
+          content="Generate jokes with an AI model trained on 10,000 late night comedy monologue quips."
+        />
+        <meta name="twitter:image" content="https://witticism-ai.space/promo.png" />
       </Head>
 
       <div className="mx-auto p-4 lg:p-6 max-w-screen-sm min-h-screen">
