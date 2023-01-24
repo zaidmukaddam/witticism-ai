@@ -82,7 +82,7 @@ export default function Home({
         <title>witticism.ai</title>
         <meta
           name="description"
-          content="Generate jokes with an AI model trained on 10,000 late night comedy monologue quips."
+          content="witticism.ai is an AI joke generation tool. It was built using GPT language models and fine-tuned with over ten thousand late night comedy monologue jokes."
         />
         <meta property="image" content="https://witticism-ai.space/promo.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -91,7 +91,7 @@ export default function Home({
         <meta property="og:title" content="witticism.ai" />
         <meta
           property="og:description"
-          content="Generate jokes with an AI model trained on 10,000 late night comedy monologue quips."
+          content="witticism.ai is an AI joke generation tool. It was built using GPT language models and fine-tuned with over ten thousand late night comedy monologue jokes."
         />
         <meta property="og:image" content="https://witticism-ai.space/promo.png" />
 
@@ -99,7 +99,7 @@ export default function Home({
         <meta name="twitter:title" content="witticism.ai" />
         <meta
           name="twitter:description"
-          content="Generate jokes with an AI model trained on 10,000 late night comedy monologue quips."
+          content="witticism.ai is an AI joke generation tool. It was built using GPT language models and fine-tuned with over ten thousand late night comedy monologue jokes."
         />
         <meta name="twitter:image" content="https://witticism-ai.space/promo.png" />
         <script async src="https://cdn.splitbee.io/sb.js" />
