@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-script-component-in-head */
 import classNames from "classnames"
 import type { InferGetServerSidePropsType } from "next"
 import Head from "next/head"
@@ -21,7 +20,6 @@ import {
 } from "../utils/async"
 import { SuggestResponse } from "../types"
 import { getRandomExamples } from "../utils/data"
-import Script from "next/script"
 
 export default function Home({
   initialExamples,
@@ -104,7 +102,7 @@ export default function Home({
           content="Generate jokes with an AI model trained on 10,000 late night comedy monologue quips."
         />
         <meta name="twitter:image" content="https://witticism-ai.space/promo.png" />
-      <Script async src="https://cdn.splitbee.io/sb.js" />
+        <script async src="https://cdn.splitbee.io/sb.js" />
       </Head>
 
       <div className="mx-auto p-4 lg:p-6 max-w-screen-sm min-h-screen">
