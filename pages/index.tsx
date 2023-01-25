@@ -237,6 +237,7 @@ export default function Home({
                                 <Popover.Button
                                   className="px-4 py-2 w-full text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none"
                                   onClick={handleCopy(fullJoke)}
+                                  data-splitbee-event="Copy Joke"
                                 >
                                   Copy joke text
                                 </Popover.Button>
@@ -246,6 +247,7 @@ export default function Home({
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   href={makeTweetUrl(fullJoke)}
+                                  data-splitbee-event="Tweet Joke"
                                 >
                                   Share on Twitter
                                 </Popover.Button>
