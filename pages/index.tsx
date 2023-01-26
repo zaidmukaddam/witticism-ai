@@ -30,8 +30,6 @@ export default function Home({
   const [results, setResults] = useState<AsyncValue<SuggestResponse>>(asyncNotStarted())
   const buttonRef = useRef<HTMLButtonElement>(null)
 
-  useEffect(() => setExamples(initialExamples), [initialExamples])
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
@@ -308,6 +306,7 @@ function Button({
 export async function getServerSideProps() {
   return {
     props: {
+      key: Date.now(), // so that state resets when clicking header link to refresh
       initialExamples: getRandomExamples(),
     },
   }
