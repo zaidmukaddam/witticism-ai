@@ -1,39 +1,62 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import { Configuration, OpenAIApi } from "openai"
-import limiterFactory from "lambda-rate-limiter"
+import { Ratelimit } from "@upstash/ratelimit"
+import { Redis } from "@upstash/redis"
 import { SuggestResponse } from "../../types"
+import profanity from "leo-profanity"
 
-const MAX_PER_INTERVAL = 10
-const ONE_MINUTE_MS = 60_000
-const rateLimiter = limiterFactory({ interval: ONE_MINUTE_MS * 10 })
+const CACHE = new Map()
+const MAX_REQUESTS_PER_USER = 12
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv() as any,
+  limiter: Ratelimit.fixedWindow(MAX_REQUESTS_PER_USER, "4 h"), // 4 hour window
+  ephemeralCache: CACHE,
+})
 
 const configuration = new Configuration({ apiKey: process.env.OPENAI_API_KEY })
 const openai = new OpenAIApi(configuration)
 
-const MODEL_ID = process.env.OPENAI_MODEL_ID ?? "text-ada-001"
-const RESPONSE_COUNT = 3
-const MAX_TOKENS = 100
+const FALLBACK_MODEL_ID = process.env.OPENAI_MODEL_ID ?? "__FALLBACK_MODEL_ID__"
+const MODEL_IDS = {
+  best: process.env.OPENAI_MODEL_ID_BEST ?? FALLBACK_MODEL_ID,
+  good: process.env.OPENAI_MODEL_ID_GOOD ?? FALLBACK_MODEL_ID,
+  okay: process.env.OPENAI_MODEL_ID_OKAY ?? FALLBACK_MODEL_ID,
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<SuggestResponse>) {
   // rudimentary rate limiting check
-  try {
-    await rateLimiter.check(MAX_PER_INTERVAL, cleanHeader(req.headers["x-real-ip"]) ?? "")
-  } catch (_) {
-    return res.status(429).json({ status: "error", reason: "rate-limit" })
+  function errorResponse(reason: SuggestResponse.Error["reason"], statusCode = 500) {
+    return res.status(statusCode).json({ status: "error", reason })
   }
+
 
   const { prompt } = req.body
   await sleep(500) // prevent loading ui flash
 
   if (prompt == null || typeof prompt !== "string" || prompt.length < 5) {
-    return res.status(500).json({ status: "error", reason: "prompt-too-short" })
+    return errorResponse("prompt-too-short")
+  } else if (prompt.length > 150) {
+    return errorResponse("prompt-too-long")
+  } else if (profanity.check(prompt)) {
+    return errorResponse("profanity")
+  }
+
+  let modelId = MODEL_IDS.best // start w/ best model, but use cheaper ones if need be
+  try {
+    const ip = getIp(req)
+    const { success, remaining } = await ratelimit.limit(ip)
+    if (!success) return errorResponse("rate-limit-user", 429)
+    if (remaining < MAX_REQUESTS_PER_USER / 2) modelId = MODEL_IDS.good
+  } catch (err) {
+    console.log("Error with rate limiter", err)
+    modelId = MODEL_IDS.okay
   }
 
   try {
     const completion = await openai.createCompletion({
-      max_tokens: MAX_TOKENS,
-      model: MODEL_ID,
-      n: RESPONSE_COUNT,
+      max_tokens: 100,
+      model: modelId,
+      n: 3,
       prompt: formatPrompt(prompt),
       stop: [" END", " THE END"],
       temperature: 0.7,
@@ -43,10 +66,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(200).json({ status: "success", prompt, results })
   } catch (err: any) {
     if (typeof err === "object" && err?.response?.status === 429) {
-      return res.status(500).json({ status: "error", reason: "too-many-requests" })
+      return errorResponse("rate-limit-global", 429)
     }
     console.log("Error when fetching suggestions", err)
-    return res.status(500).json({ status: "error", reason: "unknown" })
+    return errorResponse("unknown")
   }
 }
 
@@ -54,7 +77,16 @@ function isNonNullable<T>(value: T | undefined | null): value is T {
   return value != null
 }
 
-function cleanHeader(header: string | string[] | undefined): string | undefined {
+function getIp(req: NextApiRequest): string {
+  return (
+    parseHeader(req.headers["x-real-ip"]) ??
+    parseHeader(req.headers["x-forwarded-for"]) ??
+    req.socket.remoteAddress ??
+    "__FALLBACK_IP__"
+  )
+}
+
+function parseHeader(header: string | string[] | undefined): string | undefined {
   if (header == null) return undefined
   return Array.isArray(header) ? header[0] : header
 }
